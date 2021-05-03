@@ -1,0 +1,161 @@
+import ddf.minim.*;
+import ddf.minim.ugens.*;
+
+Minim minim;
+AudioOutput out;//it means this project which is outputing audio and it was named "out"
+AudioRecorder recorder;//create a recorder named "recorder" to save this output audio file
+  
+  int length = 60; //set the length of Demo music (sec)
+  
+  float BPM = random(60,120); //set the speed of the music
+  float i;//var that help make BPM int(actually fake, it's still float) 
+  int BPS;//beats per second (BPM/60)
+  
+  int total_beats;
+  int total_mea; //total measures
+  int measure_now;//the measure now playing
+  
+  float dur = random(0.5, 1.25); //set the random duration of notes
+  float sta = random(0.5, 4.0);//set the random starttime of notes
+  int rep = (int) random(6, 15);//set the random repeat time in per measures
+  
+  int i_note_alp = (int) random(0,7); //index of the database of the note alphabet
+  String[] sam_note_alp = {  "C", "D", "E", "F", "G", "A", "B" }; //database of the note alphabet
+  
+  int i_note_num = (int) random(0,2); //index of the database of the note number
+  String[] sam_note_num = {  "3", "4", "5"}; //database of the note number 
+  
+  String note_alp = sam_note_alp[i_note_alp]; //got the random note alphabet (it's a string)
+  String note_num = sam_note_num[i_note_num]; //got the random note number (it's a string)
+  String note = note_alp + note_num; //make the random note alphabet and note number begin one string
+  
+  String ton = "C"; //tonality of the music(testing, so it would be "C" all the time until done) 
+  String chord = "C";
+
+void setup()
+{
+  size(512, 200, P3D);
+  minim.stop();
+  //auto_record();
+}
+
+void start()
+{
+  for(i = 59.0 ; BPM > i;  ){
+  i += 1.0;
+  }; 
+  BPM = i;// make BPM int(actually fake, it's still float)
+  BPS = (int)BPM / 60;
+  total_beats = BPS * length;
+  total_mea = total_beats / 8; //because both total measures and total beats are "int" , the result will also be "int"
+  
+  print("BPM : " + BPM + "\n");
+  print("Tonality : " + ton + "\n");
+  print("total measures : " + total_mea + "\n" + "\n");
+  //print("index : " + i_note_alp + "\n" + sam_note_alp[i_note_alp] + "\n");
+
+  print("first note: " + note +"\n");  
+  print("initial repeat time :" + rep + "\n" + "\n");
+
+  Renew(sta, dur, BPM, rep, note, total_mea, measure_now);
+}
+
+void Renew(float sta, float dur, float BPM, int rep, String note, int total_mea, int measure_now){
+
+  minim = new Minim(this);
+  out = minim.getLineOut();
+  recorder = minim.createRecorder(out, "Demo.wav");//need to reference to minim, so need to find the minim = new Minim(this)
+  
+  out.setTempo( BPM );
+  out.pauseNotes();
+  
+  for(; total_mea >1; total_mea -= 1)
+  {
+    sta = sta + 8.0 *(measure_now - 1) ;
+    measure_now += 1;
+    rep = (int) random(6, 15);
+    print("measure now : " + measure_now + "\n");
+    //let forloop go thourgh "total mea" times
+    
+    for(; rep > 1; rep -= 1)
+    {
+        sta = random(0.5, 4.0) + 8*(measure_now - 1) ;
+        dur = random(0.5, 1.25);
+        
+        i_note_alp = (int) random(0,7);
+        i_note_num = (int) random(0,2); //index of the database of the note number
+  
+        note_alp = sam_note_alp[i_note_alp];
+        note_num = sam_note_num[i_note_num];
+        note = note_alp + note_num;
+        
+        out.playNote(sta, dur, note);
+        
+        print("now rep" + rep + "\n" + "starttime = " + sta + "\n" + "duration = " + dur + "\n" + "note = " + note + "\n" + "\n");
+        
+        if (rep>1){continue;}
+        else { break; }//if rep in this "rep" forloop this time have been all done then it will jump out rep forloop, and go through the "mea" forloop.
+    }
+    //let forloop go though "rep" times
+    
+};
+  
+  // now we can start the sequencer again to hear our sequence
+  out.resumeNotes();
+  
+}
+
+
+void draw()
+{
+  
+  background(0);
+  stroke(255);
+  // draw the waveforms
+  for(int i = 0; i < out.bufferSize() - 1; i++)
+  {
+    line( i, 50 + out.left.get(i)*50, i+1, 50 + out.left.get(i+1)*50 );
+    line( i, 150 + out.right.get(i)*50, i+1, 150 + out.right.get(i+1)*50 );
+  }
+
+    text("press 'space' to start playing / 'x' to stop playing", 100, 80);
+    text("press 'r' to start recording demo", 100, 100);
+    text("press 's' to save demo", 100, 120);
+}
+
+
+void keyReleased()
+{
+if ( key == 'r' ) 
+  {
+
+    if ( recorder.isRecording() ) 
+    {
+      recorder.endRecord();
+      println("record end.");
+    }
+    else 
+    {
+      recorder.beginRecord();
+      println("start to record");
+    }
+
+  }
+  
+  if ( key == 's' )
+  {
+    recorder.save();
+    println("'Demo' has been saved.");
+  }
+  
+  if (key == ' ')
+  {
+    start();
+    println("start playing");
+  }
+  if (key=='x')
+  {
+    minim.stop();
+    println("stop playing");
+  }
+}
