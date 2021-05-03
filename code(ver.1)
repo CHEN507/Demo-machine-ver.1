@@ -2,14 +2,14 @@ import ddf.minim.*;
 import ddf.minim.ugens.*;
 
 Minim minim;
-AudioOutput out;//it means this project which is outputing audio and it was named "out"
+AudioOutput out;//it means this project which is outputing audio was named "out"
 AudioRecorder recorder;//create a recorder named "recorder" to save this output audio file
   
   int length = 60; //set the length of Demo music (sec)
   
   float BPM = random(60,120); //set the speed of the music
   float i;//var that help make BPM int(actually fake, it's still float) 
-  int BPS;//beats per second (BPM/60)
+  int BPS;//beats per second (= BPM/60)
   
   int total_beats;
   int total_mea; //total measures
@@ -20,17 +20,16 @@ AudioRecorder recorder;//create a recorder named "recorder" to save this output 
   int rep = (int) random(6, 15);//set the random repeat time in per measures
   
   int i_note_alp = (int) random(0,7); //index of the database of the note alphabet
-  String[] sam_note_alp = {  "C", "D", "E", "F", "G", "A", "B" }; //database of the note alphabet
+  String[] sam_note_alp = { "C", "D", "E", "F", "G", "A", "B" }; //database of the note alphabet
   
   int i_note_num = (int) random(0,2); //index of the database of the note number
-  String[] sam_note_num = {  "3", "4", "5"}; //database of the note number 
+  String[] sam_note_num = { "3", "4", "5" }; //database of the note number 
   
-  String note_alp = sam_note_alp[i_note_alp]; //got the random note alphabet (it's a string)
-  String note_num = sam_note_num[i_note_num]; //got the random note number (it's a string)
-  String note = note_alp + note_num; //make the random note alphabet and note number begin one string
+  String note_alp = sam_note_alp[i_note_alp]; //get the random note alphabet (it's a string)
+  String note_num = sam_note_num[i_note_num]; //get the random note number (it's a string)
+  String note = note_alp + note_num; //make the random note alphabet and note number become one string
   
   String ton = "C"; //tonality of the music(testing, so it would be "C" all the time until done) 
-  String chord = "C";
 
 void setup()
 {
@@ -52,7 +51,7 @@ void start()
   print("BPM : " + BPM + "\n");
   print("Tonality : " + ton + "\n");
   print("total measures : " + total_mea + "\n" + "\n");
-  //print("index : " + i_note_alp + "\n" + sam_note_alp[i_note_alp] + "\n");
+  //print("index : " + i_note_alp + "\n" + sam_note_alp[i_note_alp] + "\n"); //just test
 
   print("first note: " + note +"\n");  
   print("initial repeat time :" + rep + "\n" + "\n");
